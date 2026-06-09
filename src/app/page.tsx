@@ -52,7 +52,6 @@ export default function GalleryPage() {
         position: "relative",
       }}
     >
-      asdsd
       {/* Ambient glows */}
       <div
         style={{
