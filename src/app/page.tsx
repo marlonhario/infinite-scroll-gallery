@@ -41,82 +41,7 @@ export default function GalleryPage() {
   const handlePreview = useCallback((p: GalleryPhoto) => setActive(p), []);
   const handleClose = useCallback(() => setActive(null), []);
   const handleNavigate = useCallback((p: GalleryPhoto) => setActive(p), []);
-  const [secretMessage, setSecretMessage] = useState<any>("");
-
-  async function printSecretMessage(url: string) {
-    const res = await fetch(url);
-    const html = await res.text();
-
-    // Parse HTML safely
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-
-    const rows = [...doc.querySelectorAll("tr")];
-
-    const points = [];
-
-    // 1. Extract structured data
-    for (const row of rows) {
-      const cells = row.querySelectorAll("td");
-
-      if (cells.length < 3) continue;
-
-      const x = Number(cells[0]?.textContent.trim());
-      const char = cells[1]?.textContent.trim();
-      const y = Number(cells[2]?.textContent.trim());
-
-      if (!Number.isNaN(x) && !Number.isNaN(y) && char) {
-        points.push({ x, y, char });
-      }
-    }
-
-    // 2. Find boundaries (IMPORTANT for cropping)
-    let minX = Infinity,
-      maxX = -Infinity;
-    let minY = Infinity,
-      maxY = -Infinity;
-
-    for (const p of points) {
-      minX = Math.min(minX, p.x);
-      maxX = Math.max(maxX, p.x);
-      minY = Math.min(minY, p.y);
-      maxY = Math.max(maxY, p.y);
-    }
-
-    // 3. Build grid only for needed area
-    const grid = new Map();
-
-    for (const { x, y, char } of points) {
-      if (!grid.has(y)) grid.set(y, new Map());
-      grid.get(y).set(x, char);
-    }
-
-    // 4. Render CROPPED output
-    let output = "";
-
-    for (let y = minY; y <= maxY; y++) {
-      let row = "";
-
-      for (let x = minX; x <= maxX; x++) {
-        row += grid.get(y)?.get(x) ?? " ";
-      }
-
-      output += row.trimEnd() + "\n";
-    }
-
-    return output.trimEnd();
-  }
   
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    const value = printSecretMessage(
-      "https://docs.google.com/document/d/e/2PACX-1vSvM5gDlNvt7npYHhp_XfsJvuntUhq184By5xO_pA4b_gCWeXb6dM6ZxwN8rE6S4ghUsCj2VKR21oEP/pub",
-    );
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSecretMessage(value);
-  }, []);
-
   return (
     <div
       style={{
@@ -127,8 +52,6 @@ export default function GalleryPage() {
         position: "relative",
       }}
     >
-      <pre id="output">{secretMessage}</pre>
-
       {/* Ambient glows */}
       <div
         style={{
