@@ -43,7 +43,7 @@ export default function GalleryPage() {
   const handleNavigate = useCallback((p: GalleryPhoto) => setActive(p), []);
   const [secretMessage, setSecretMessage] = useState<any>("");
 
-  async function printSecretMessage(url) {
+  async function printSecretMessage(url: string) {
     const res = await fetch(url);
     const html = await res.text();
 
